@@ -20,6 +20,39 @@
             android:text="@string/large_text"
             android:autoLink="web"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin">
+
+            <Button
+                android:id="@+id/save_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center_horizontal"
+                android:onClick="saveCardPassword"
+                android:text="保存"
+                android:textSize="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/text_margin"
+                android:layout_toLeftOf="@id/save_password"
+                android:hint="食在卡支付密码"
+                android:inputType="numberPassword"
+                android:maxLength="6"
+                android:textSize="18dp" />
+
+        </RelativeLayout>
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

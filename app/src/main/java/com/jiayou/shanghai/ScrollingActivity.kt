@@ -7,7 +7,6 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import com.jiayou.shanghai.databinding.ActivityScrollingBinding
-import java.lang.Exception
 
 class ScrollingActivity : AppCompatActivity() {
 
@@ -24,6 +23,8 @@ class ScrollingActivity : AppCompatActivity() {
         binding.fab.setOnClickListener { view ->
             openAccessibility(view)
         }
+
+        binding.content.password.setText(Card.getPassword(applicationContext))
     }
 
     fun openAccessibility(view: View?) {
@@ -36,5 +37,9 @@ class ScrollingActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
             }
         }
+    }
+
+    fun saveCardPassword(view: View?) {
+        Card.setPassword(applicationContext, binding.content.password.toString())
     }
 }

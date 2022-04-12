@@ -1,6 +1,7 @@
 package com.jiayou.shanghai
 
 import android.accessibilityservice.AccessibilityService
+import android.os.Bundle
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -16,31 +17,36 @@ class DingDongService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         Log.d(TAG, "event: $event")
-        event?.let {
-            handleClassName(event)
+        event?.runCatching {
+            handleClassName(this)
             when (currentClassName) {
                 CART_ACTIVITY -> {
-                    pay(event)
+                    pay(this)
                 }
                 HOME_ACTIVITY -> {
-                    jumpToCartActivity(event)
+                    jumpToCartActivity(this)
                 }
                 CHOOSE_DELIVERY_TIME, CHOOSE_DELIVERY_TIME_V2 -> {
-                    chooseDeliveryTime(event)
+                    chooseDeliveryTime(this)
                 }
                 GX0 -> {
                     performGlobalAction(GLOBAL_ACTION_BACK)
                 }
                 XN1 -> {
-                    checkNotification(event)
+                    checkNotification(this)
                 }
                 RETURN_CART_DIALOG -> {
-                    clickReturnCartBtn(event)
+                    clickReturnCartBtn(this)
+                }
+                W90 -> {
+                    setPassword(this)
                 }
                 else -> {
-                    clickDialog(event)
+                    clickDialog(this)
                 }
             }
+        }?.onFailure {
+            Log.e(TAG, "发生错误", it)
         }
     }
 
@@ -120,6 +126,25 @@ class DingDongService : AccessibilityService() {
         }
     }
 
+    private fun setPassword(event: AccessibilityEvent) {
+        event.source?.findAccessibilityNodeInfosByText("余额支付")
+            ?.takeIf {
+                it.isNotEmpty()
+            }?.let {
+                it[0].parent
+            }?.takeIf {
+                it.childCount > 3
+            }?.getChild(3)?.apply {
+                val arguments = Bundle()
+                arguments.putCharSequence(
+                    AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                    Card.getPassword(applicationContext)
+                )
+                performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
+            }
+        Log.d(TAG, "onSet password")
+    }
+
     private fun clickDialog(event: AccessibilityEvent) {
         var nodes = event.source?.findAccessibilityNodeInfosByText("继续支付")
         if (nodes == null) {
@@ -144,5 +169,6 @@ class DingDongService : AccessibilityService() {
         const val RETURN_CART_DIALOG = "by"
         const val XN1 = "xn1"
         const val CHOOSE_DELIVERY_TIME_V2 = "iy"
+        const val W90 = "w90"
     }
 }
