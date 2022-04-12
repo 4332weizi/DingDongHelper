@@ -117,13 +117,20 @@ class DingDongService : AccessibilityService() {
             Log.d(TAG, "enableJumpCart: $enableJumpCart, return")
             return
         }
-        var nodes = event.source?.findAccessibilityNodeInfosByText("去结算")
-        nodes?.forEach { node ->
-            node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-            enableJumpCart = false
-            Log.d(TAG, "onClick jump to cart")
-            return@forEach
-        }
+        event.source?.findAccessibilityNodeInfosByText("全选")
+            ?.forEach {
+                if (!it.parent.getChild(0).isChecked) {
+                    it.parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    Log.d(TAG, "onClick select all")
+                }
+            }
+        event.source?.findAccessibilityNodeInfosByText("去结算")
+            ?.forEach { node ->
+                node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                enableJumpCart = false
+                Log.d(TAG, "onClick jump to cart")
+                return@forEach
+            }
     }
 
     private fun setPassword(event: AccessibilityEvent) {
